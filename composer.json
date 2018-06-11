@@ -1,0 +1,55 @@
+{
+    "name": "uxgood/oauth-bundle",
+    "type": "symfony-bundle",
+    "homepage": "https://github.com/uxgood/oauth-bundle",
+    "description": "Support for authenticating users using both OAuth1.0a and OAuth2 in Symfony.",
+    "license": "MIT",
+    "keywords":    [
+    ],
+
+    "authors": [
+        {
+            "name": "UxGood",
+            "email": "uxgood@hotmail.com"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "https://github.com/uxgood/oauth-bundle/contributors"
+        }
+    ],
+
+    "require": {
+        "php": "^5.6|^7.0"
+    },
+
+    "require-dev": {
+    },
+
+    "conflict": {
+    },
+
+    "suggest": {
+    },
+
+    "autoload": {
+        "psr-4": {
+            "UxGood\\Bundle\\OAuthBundle\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "UxGood\\Bundle\\OAuthBundle\\Tests\\": "Tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    }
+}
