@@ -1,0 +1,30 @@
+language: php
+sudo: false
+
+cache:
+    directories:
+        - $HOME/.composer/cache/files
+
+matrix:
+    fast_finish: true
+    include:
+        - php: 7.0
+          env: SKELETON_VERSION="^3.4"
+        - php: 7.1
+          env: SKELETON_VERSION="^4.0"
+        - php: 7.2
+          env: SKELETON_VERSION="^4.1"
+
+before_install:
+    - phpenv config-rm xdebug.ini || true
+    - export VERSION=$(if [ "${TRAVIS_BRANCH}" == "master" ];then echo @dev;else echo "^${TRAVIS_BRANCH}-dev";fi)
+    - export PACKAGES=uxgood/oauth-bundle:${VERSION}
+
+install:
+    - composer create-project "symfony/skeleton:${SKELETON_VERSION}" flex
+    - cd flex
+
+script:
+    - composer req "${PACKAGES}" php-http/curl-client
+    - ./bin/console cache:clear
+    - ./bin/console assets:install public --symlink --relative
