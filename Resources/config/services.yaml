@@ -32,4 +32,20 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    uxgood_oauth.authentication.listener.oauth:
+        class: UxGood\Bundle\OAuthBundle\Security\Http\Firewall\OAuthListener
+        parent: 'security.authentication.listener.abstract'
+        autowire: false
+        autoconfigure: false
+        public: false
+        abstract: true
 
+    uxgood_oauth.authentication.provider.oauth:
+        class: UxGood\Bundle\OAuthBundle\Security\Core\Authentication\Provider\OAuthProvider
+
+    uxgood_oauth.authentication.entry_point.oauth:
+        class: UxGood\Bundle\OAuthBundle\Security\Http\EntryPoint\OAuthEntryPoint
+        abstract: true
+        arguments:
+            - '@http_kernel'
+            - '@security.http_utils'
