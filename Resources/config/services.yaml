@@ -18,9 +18,9 @@ services:
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
-    #UxGood\Bundle\OAuthBundle\Controller\:
-    #    resource: '../../Controller'
-    #    tags: ['controller.service_arguments']
+    UxGood\Bundle\OAuthBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
 
     #UxGood\Bundle\OAuthBundle\Repository\:
     #    resource: '../../Repository'
@@ -29,6 +29,10 @@ services:
     #UxGood\Bundle\OAuthBundle\DataFixtures\:
     #    resource: '../../DataFixtures'
     #    tags: ['doctrine.fixture.orm']
+
+    UxGood\Bundle\OAuthBundle\OAuth\OAuthHelper\:
+        resource: '../../OAuth/OAuthHelper/*'
+        tags: [ 'uxgood_oauth.oauth_helper' ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -49,3 +53,8 @@ services:
         arguments:
             - '@http_kernel'
             - '@security.http_utils'
+    uxgood_oauth.oauth.oauth_helper_manager:
+        class: UxGood\Bundle\OAuthBundle\OAuth\OAuthHelperManager
+
+    uxgood_oauth.http.client.simple:
+        class: UxGood\Bundle\OAuthBundle\Http\SimpleMethodsClient

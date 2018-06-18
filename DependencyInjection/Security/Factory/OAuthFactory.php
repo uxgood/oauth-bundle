@@ -42,15 +42,16 @@ class OAuthFactory extends AbstractFactory
      */
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-        $provider = 'uxgood_oauth.authentication.provider.oauth.'.$id;
+        $providerId = 'uxgood_oauth.authentication.provider.oauth';
 
         $container
-            ->setDefinition($provider, new ChildDefinition('uxgood_oauth.authentication.provider.oauth'))
+            ->setDefinition($providerId . '.' . $id, new ChildDefinition($providerId))
+            ->addArgument(new Reference('uxgood_oauth.oauth.oauth_helper_manager.' . $id))
             ->addArgument(new Reference('security.user_checker'))
             ->addArgument(new Reference('security.token_storage'))
         ;
 
-        return $provider;
+        return $providerId . '.' . $id;
     }
 
     /**

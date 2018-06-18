@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use UxGood\Bundle\OAuthBundle\DependencyInjection\UxGoodOAuthExtension;
 use UxGood\Bundle\OAuthBundle\DependencyInjection\Security\Factory\OAuthFactory;
+use UxGood\Bundle\OAuthBundle\DependencyInjection\Compiler\AddOAuthHelperPass;
 
 class UxGoodOAuthBundle extends Bundle
 {
@@ -20,7 +21,7 @@ class UxGoodOAuthBundle extends Bundle
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new OAuthFactory());
 
-        //$container->addCompilerPass(new SetResourceOwnerServiceNameCompilerPass());
+        $container->addCompilerPass(new AddOAuthHelperPass());
     }
     /**
      * {@inheritdoc}

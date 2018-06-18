@@ -3,6 +3,7 @@
 namespace UxGood\Bundle\OAuthBundle\Security\Core\Authentication\Provider;
 
 use UxGood\Bundle\OAuthBundle\Security\Core\Authentication\Token\OAuthToken;
+use UxGood\Bundle\OAuthBundle\OAuth\OAuthHelperManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -22,12 +23,16 @@ class OAuthProvider implements AuthenticationProviderInterface
      */
     private $tokenStorage;
 
+    private $helperManager;
+
     /**
      * @param UserCheckerInterface            $userChecker      User checker
      * @param TokenStorageInterface           $tokenStorage
      */
-    public function __construct(UserCheckerInterface $userChecker, TokenStorageInterface $tokenStorage)
+    public function __construct(OAuthHelperManagerInterface $helperManager,
+        UserCheckerInterface $userChecker, TokenStorageInterface $tokenStorage)
     {
+        $this->helperManager = $helperManager;
         $this->userChecker = $userChecker;
         $this->tokenStorage = $tokenStorage;
     }
