@@ -1,8 +1,7 @@
 <?php
 namespace UxGood\Bundle\OAuthBundle\Http;
+
 use Psr\Http\Message\ResponseInterface;
-use UxGood\Bundle\OAuthBundle\Http\Response;
-use UxGood\Bundle\OAuthBundle\Http\MethodsClientInterface;
 
 class SimpleMethodsClient implements MethodsClientInterface
 {

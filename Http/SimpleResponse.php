@@ -1,9 +1,9 @@
 <?php
 namespace UxGood\Bundle\OAuthBundle\Http;
+
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\HeadersInterface;
-use UxGood\Bundle\OAuthBundle\Http\SimpleStream;
 use Symfony\Component\HttpFoundation\Response;
 
 class SimpleResponse implements ResponseInterface

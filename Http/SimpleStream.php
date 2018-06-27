@@ -1,5 +1,6 @@
 <?php
 namespace UxGood\Bundle\OAuthBundle\Http;
+
 use Psr\Http\Message\StreamInterface;
 
 class SimpleStream implements StreamInterface
