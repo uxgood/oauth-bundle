@@ -8,10 +8,17 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 
 class OAuthProvider implements AuthenticationProviderInterface
 {
+    /**
+     * @var UserProviderInterface
+     */
+    private $userProvider;
+
     /**
      * @var UserCheckerInterface
      */
@@ -23,11 +30,13 @@ class OAuthProvider implements AuthenticationProviderInterface
     private $tokenStorage;
 
     /**
-     * @param UserCheckerInterface            $userChecker      User checker
+     * @param UserProviderInterface           $userProvider
+     * @param UserCheckerInterface            $userChecker
      * @param TokenStorageInterface           $tokenStorage
      */
-    public function __construct(UserCheckerInterface $userChecker, TokenStorageInterface $tokenStorage)
+    public function __construct(UserProviderInterface $userProvider, UserCheckerInterface $userChecker, TokenStorageInterface $tokenStorage)
     {
+        $this->userProvider = $userProvider;
         $this->userChecker = $userChecker;
         $this->tokenStorage = $tokenStorage;
     }
@@ -37,9 +46,7 @@ class OAuthProvider implements AuthenticationProviderInterface
      */
     public function supports(TokenInterface $token)
     {
-        return
-            $token instanceof OAuthToken
-        ;
+        return $token instanceof OAuthToken;
     }
 
     /**
@@ -48,17 +55,65 @@ class OAuthProvider implements AuthenticationProviderInterface
     public function authenticate(TokenInterface $token)
     {
         if (!$this->supports($token)) {
-            return;
+            throw new AuthenticationException('The token is not supported by this authentication provider.');
         }
 
-        // fix connect to external social very time
-        if ($token->isAuthenticated()) {
-            return $token;
+        $username = $token->getUsername();
+        if ('' === $username || null === $username) {
+            $username = AuthenticationProviderInterface::USERNAME_NONE_PROVIDED;
         }
 
-        /* @var OAuthToken $token */
+        try {
+            $user = $this->retrieveUser($username, $token);
+        } catch (UsernameNotFoundException $e) {
+            throw new BadCredentialsException('Bad credentials.', 0, $e);
+        }
 
-        return $token;
+        if (!$user instanceof UserInterface) {
+            throw new AuthenticationServiceException('retrieveUser() must return a UserInterface.');
+        }
+
+        try {
+            $this->userChecker->checkPreAuth($user);
+            $this->checkAuthentication($user, $token);
+            $this->userChecker->checkPostAuth($user);
+        } catch (BadCredentialsException $e) {
+            throw new BadCredentialsException('Bad credentials.', 0, $e);
+        }
+
+        $authenticatedToken = new OAuthToken($user, $user->getRoles());
+        $authenticatedToken->setAttributes($token->getAttributes());
+
+        return $authenticatedToken;
     }
 
+    protected function retrieveUser($username, OAuthToken $token)
+    {
+        $user = $token->getUser();
+        if ($user instanceof UserInterface) {
+            return $user;
+        }
+
+        try {
+            $user = $this->userProvider->loadUserByUsername($username);
+            if (!$user instanceof UserInterface) {
+                throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
+            }
+            return $user;
+        } catch (UsernameNotFoundException $e) {
+            $e->setUsername($username);
+            throw $e;
+        } catch (\Exception $e) {
+            $e = new AuthenticationServiceException($e->getMessage(), 0, $e);
+            $e->setToken($token);
+            throw $e;
+        }
+    }
+
+    protected function checkAuthentication(UserInterface $user, OAuthToken $token)
+    {
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof UserInterface) {
+        }
+    }
 }

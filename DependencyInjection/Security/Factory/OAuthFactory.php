@@ -46,6 +46,7 @@ class OAuthFactory extends AbstractFactory
 
         $container
             ->setDefinition($provider, new ChildDefinition('uxgood_oauth.authentication.provider.oauth'))
+            ->addArgument(new Reference('uxgood_oauth.user.provider.oauth'))
             ->addArgument(new Reference('security.user_checker'))
             ->addArgument(new Reference('security.token_storage'))
         ;

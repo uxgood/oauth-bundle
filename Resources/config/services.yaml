@@ -49,3 +49,5 @@ services:
         arguments:
             - '@http_kernel'
             - '@security.http_utils'
+    uxgood_oauth.user.provider.oauth:
+        class: UxGood\Bundle\OAuthBundle\Security\Core\User\OAuthUserProvider
